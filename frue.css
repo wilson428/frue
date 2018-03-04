@@ -1,0 +1,97 @@
+#frue {
+	max-width: 320px;
+	font-family: Arial, sans-serif;
+	font-size: 16px;
+	text-align: center;
+	margin: 10px auto;
+}
+
+#instructions {
+	height: 60px;
+}
+
+#console {
+	position: relative;
+	text-align: left;
+	width: 200px;
+	margin-left: 77px;
+}
+
+#frue_image {
+	height: 30px;
+	vertical-align: bottom;
+}
+
+#frue_equals {
+	font-size: 24px;
+	line-height: 30px;
+	font-family: Courier New, monospace;
+	width: 30px;
+	text-align: center;
+}
+
+#frue_value {
+	font-size: 24px;
+	line-height: 30px;
+	font-family: Courier New, monospace;
+	width: 105px;
+	height: 32px;
+	display: inline-block;
+	box-sizing: border-box;
+}
+
+#frue_download img {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	right: 0;
+	top: 8px;	
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#frue_svg {
+	display: none;
+}
+
+#canvas {
+	display: none;
+}
+
+.axis text {
+	font-size: 14px;
+}
+
+.axis .tick line {
+	stroke: #CCC;
+}
+
+.x .tick text {
+	display: none;
+}
+
+.y .domain {
+	stroke-width: 0;
+}
+
+.frue_line {
+	stroke-width: 6px;
+	stroke: black;
+}
+
+.dot {
+	fill: pink;
+	stroke-width: 1px;
+	stroke: pink;
+	cursor: pointer;
+}
+
+.dot.highlighted {
+	fill: red;
+}
+
+#canvas {
+	width: 36px;
+	height: 36px;
+	background-color: #CCC;
+}

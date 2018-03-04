@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="frue.css">
+</head>
+<body>
+  <div id="frue">
+    <div id="instructions">Drag the red dots to create a frue character, or enter a value directly in the box below.</div>
+    <div id="console">
+      <img id="frue_image" />
+      <span id="frue_equals">==</span>
+      <input id="frue_value" value=0.5></input>
+      <a id="frue_download" href="#"><img src="img/download.png" /></a>
+    </div>
+    <div id="svg_container">
+      <svg id="frue_generator"></svg>
+      <svg id="frue_svg"></svg>
+    </div>
+    <canvas id="canvas"></canvas>
+  </div>
+  <script src="src/d3.v4.min.js"></script>
+  <script src="src/canvg.min.js"></script>
+  <script src="frue.js"></script>
+</body>
+</html>
