@@ -1,95 +1,173 @@
-var svg = d3.select("#frue #frue_generator"),
-    width = 240,
-    height = 220;
-
 var svg_image = d3.select("#frue #frue_svg");
-
 var canvas = document.getElementById("canvas");
-var img = document.getElementById("frue_image");
-var a = document.getElementById("frue_download");
-
-svg.attr("width", width).attr("height", height);
-
-var margin = { top: 10, right: 40, bottom: 10, left: 40 };
-
+var width = 240;
+var height = 240;
+var margin = { top: 10, right: 40, bottom: 30, left: 40 };
 var chart_width = width - (margin.left + margin.right);
 var chart_height = height - (margin.top + margin.bottom);
+var xScale = d3.scaleLinear().domain([0, 1]).range([0, chart_width]);
+var yScale = d3.scaleLinear().domain([0,1]).range([chart_height, 0]);
 
 svg_image.attr("height", chart_height).attr("width", chart_width);
 
-var xScale = d3.scaleLinear().domain([0, 1]).range([0, chart_width]);
-var xAxis = d3.axisBottom(xScale);
+var value, value_left = 0.5, value_right = 1;
 
-var yScale = d3.scaleLinear().domain([0,1]).range([chart_height, 0]);
-var yAxis = d3.axisLeft(yScale);
+var g_frue_image = svg_image.append("g").attr("class", "g_frue");
 
-xAxis.tickValues(d3.range(0, 1.1, 0.2));
-// xAxis.tickFormat(function(d) { return ""; });
-xAxis.tickSize(-chart_height, 0);
+function generator() {
+	var svg = d3.select("#frue #frue_generator");
 
-yAxis.tickValues([]);
-yAxis.tickSize(0, 0);
+	var img = document.getElementById("frue_image");
+	var a = document.getElementById("frue_download");
 
-svg.append("g")
-	.attr("class", "x axis")
-	.attr("transform", "translate(" + margin.left + "," + (chart_height + margin.top) + ")")
-	.call(xAxis);
+	svg.attr("width", width).attr("height", height);
 
-svg.append("g")
-	.attr("class", "y axis")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")		
-	.call(yAxis);
+	var xAxis = d3.axisBottom(xScale);
+	var yAxis = d3.axisLeft(yScale);
 
-g_frue = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-g_dots = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	xAxis.tickValues(d3.range(0, 1.1, 0.2));
+	xAxis.tickSize(-chart_height, 0);
 
-// top line. The -3 and +3 are because the stroke-width is 6
-g_frue.append("path")
-	.attr("id", "top_line")
-	.style("stroke-width", "6px")
-	.style("stroke", "black")
-	.attr("d", "M" + (xScale(0) - 3) + "," + yScale(1) + "L" + (xScale(1) + 3) + "," + yScale(1));
+	yAxis.tickValues([]);
+	yAxis.tickSize(0, 0);
 
-var upright = g_frue.append("path")
-	.style("stroke-width", "6px")
-	.style("stroke", "black")
-	.attr("d", "M" + xScale(0.5) + "," + (yScale(0) + 1) + "L" + xScale(0.5) + "," + yScale(1));
+	svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(" + margin.left + "," + (chart_height + margin.top) + ")")
+		.call(xAxis);
 
-var horizontal = g_frue.append("path")
-	.style("stroke-width", "6px")
-	.style("stroke", "black")
-	.attr("d", "M" + xScale(0.5) + "," + yScale(0.5) + "L" + xScale(1) + "," + yScale(0.5));
+	svg.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")		
+		.call(yAxis);
 
-var dot_left = g_dots.append("circle")
-	.attr("cx", xScale(0.5))
-	.attr("cy", yScale(0.5))
-	.attr("r", 12)
-	.attr("id", "dot_left")
-	.attr("class", "dot")
-    .call(d3.drag()
-    .on("start", dragstarted)
-    .on("drag", dragged)
-    .on("end", dragended));
+	var g_frue = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")").attr("class", "g_frue");
+	var g_dots = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-var dot_right = g_dots.append("circle")
-	.attr("cx", xScale(1))
-	.attr("cy", yScale(0.5))
-	.attr("r", 12)
-	.attr("class", "dot highlighted")
-	.attr("id", "dot_right")
-    .call(d3.drag()
-    .on("start", dragstarted)
-    .on("drag", dragged)
-    .on("end", dragended));
+	// top line. The -3 and +3 are because the stroke-width is 6
+	d3.selectAll(".g_frue").append("path")
+		.attr("id", "top_line")
+		.style("stroke-width", "6px")
+		.style("stroke", "black")
+		.attr("d", "M" + (xScale(0) - 3) + "," + yScale(1) + "L" + (xScale(1) + 3) + "," + yScale(1));
 
-var value,
-	value_left = 0.5,
-	value_right = 1,
-	x_start,
-	x_max_left = xScale(0.5),
-	x_max_right = xScale(1);
+	var upright = g_frue.append("path")
+		.style("stroke-width", "6px")
+		.style("stroke", "black")
+		.attr("d", "M" + xScale(0.5) + "," + (yScale(0) + 1) + "L" + xScale(0.5) + "," + yScale(1));
 
-setUpright();
+	var horizontal = g_frue.append("path")
+		.style("stroke-width", "6px")
+		.style("stroke", "black")
+		.attr("d", "M" + xScale(0.5) + "," + yScale(0.5) + "L" + xScale(1) + "," + yScale(0.5));
+
+	var dot_left = g_dots.append("circle")
+		.attr("cx", xScale(0.5))
+		.attr("cy", yScale(0.5))
+		.attr("r", 12)
+		.attr("id", "dot_left")
+		.attr("class", "dot")
+	    .call(d3.drag()
+	    .on("start", dragstarted)
+	    .on("drag", dragged)
+	    .on("end", dragended));
+
+	var dot_right = g_dots.append("circle")
+		.attr("cx", xScale(1))
+		.attr("cy", yScale(0.5))
+		.attr("r", 12)
+		.attr("class", "dot highlighted")
+		.attr("id", "dot_right")
+	    .call(d3.drag()
+	    .on("start", dragstarted)
+	    .on("drag", dragged)
+	    .on("end", dragended));
+
+	var x_start,
+		x_max_left = xScale(0.5),
+		x_max_right = xScale(1);
+
+	function dragstarted(d) {
+		x_start = d3.event.x;
+
+		if (this.id == "dot_left") {
+			x_offset = parseInt(dot_left.attr("cx"), 10) - x_start;
+			if (value_right != 1) {
+				d3.select("#instructions").html("By convention, the upright can only move to the left of 0.5, and only when the horizontal bar ends at 1.");
+				value_right = 1;
+				setHorizontal();
+			}
+		} else {
+			x_offset = parseInt(dot_right.attr("cx"), 10) - x_start;
+			if (value_left != 0.5) {
+				d3.select("#instructions").html("By convention, the horizontal line can only move to the left down to 0.5, and only when the upright line is at 0.5.");
+				value_left = 0.5;
+				setUpright();
+			}
+		}
+		updateValue();
+	}
+
+	function dragged(d) {
+		if (this.id == "dot_left") {
+			var x = parseInt(d3.event.x + x_offset - 3); // -6 because stroke-width is 6px
+			x = Math.min(Math.max(0, x), x_max_left);
+
+			value_left = xScale.invert(x);
+			setUpright();
+			setHorizontal();
+			updateValue();
+		} else {
+			var x = parseInt(d3.event.x + x_offset - 3); // -6 because stroke-width is 6px
+			x = Math.min(Math.max(x_max_left, x), x_max_right);
+
+			value_right = xScale.invert(x);
+			setUpright();
+			setHorizontal();
+			updateValue();
+		}
+	}
+
+	function dragended(d) {
+
+	}
+
+	d3.select("#frue_value").on("keyup", function() {
+		var v = parseFloat(this.value);
+		var s = String(this.value);
+		console.log(v, s);
+		if (s == "0." || s == ".") {
+			console.log(s);
+			this.value == "0.";
+			v = 0;
+			value = 0;
+			value_left = Math.min(v, 0.5);
+			value_right = 1 - v;
+			setUpright();
+			setHorizontal();
+			updateValue();
+			this.value = "0.";
+			return;		
+		} else if (s == "") {
+			return;
+		} else if (typeof v != "number" || !v && v !== 0) {
+			this.value = 0;
+			return;
+		}
+		v = Math.min(1, Math.max(0, v));
+		v = Math.round(v * 10000) / 10000;
+		this.value = v;
+		value = v;
+		value_left = Math.min(v, 0.5);
+		value_right = 1 - v + value_left;
+		setUpright();
+		setHorizontal();
+		updateValue();
+	});
+
+	setUpright();
+	updateValue();
+}
 
 function setHorizontal() {
 	dot_right.attr("cx", xScale(value_right));
@@ -131,84 +209,4 @@ function updateValue() {
 		dot_right.classed("highlighted", false);
 	}
 }
-
-updateValue();
-
-function dragstarted(d) {
-	x_start = d3.event.x;
-
-	if (this.id == "dot_left") {
-		x_offset = parseInt(dot_left.attr("cx"), 10) - x_start;
-		if (value_right != 1) {
-			d3.select("#instructions").html("By convention, the upright can only move to the left of 0.5, and only when the horizontal bar ends at 1.");
-			value_right = 1;
-			setHorizontal();
-		}
-	} else {
-		x_offset = parseInt(dot_right.attr("cx"), 10) - x_start;
-		if (value_left != 0.5) {
-			d3.select("#instructions").html("By convention, the horizontal line can only move to the left down to 0.5, and only when the upright line is at 0.5.");
-			value_left = 0.5;
-			setUpright();
-		}
-	}
-	updateValue();
-}
-
-function dragged(d) {
-	if (this.id == "dot_left") {
-		var x = parseInt(d3.event.x + x_offset - 3); // -6 because stroke-width is 6px
-		x = Math.min(Math.max(0, x), x_max_left);
-
-		value_left = xScale.invert(x);
-		setUpright();
-		setHorizontal();
-		updateValue();
-	} else {
-		var x = parseInt(d3.event.x + x_offset - 3); // -6 because stroke-width is 6px
-		x = Math.min(Math.max(x_max_left, x), x_max_right);
-
-		value_right = xScale.invert(x);
-		setUpright();
-		setHorizontal();
-		updateValue();
-	}
-}
-
-function dragended(d) {
-
-}
-
-d3.select("#frue_value").on("keyup", function() {
-	var v = parseFloat(this.value);
-	var s = String(this.value);
-	console.log(v, s);
-	if (s == "0." || s == ".") {
-		console.log(s);
-		this.value == "0.";
-		v = 0;
-		value = 0;
-		value_left = Math.min(v, 0.5);
-		value_right = 1 - v;
-		setUpright();
-		setHorizontal();
-		updateValue();
-		this.value = "0.";
-		return;		
-	} else if (s == "") {
-		return;
-	} else if (typeof v != "number" || !v && v !== 0) {
-		this.value = 0;
-		return;
-	}
-	v = Math.min(1, Math.max(0, v));
-	v = Math.round(v * 10000) / 10000;
-	this.value = v;
-	value = v;
-	value_left = Math.min(v, 0.5);
-	value_right = 1 - v + value_left;
-	setUpright();
-	setHorizontal();
-	updateValue();
-});
 

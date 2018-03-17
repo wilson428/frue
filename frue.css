@@ -66,9 +66,9 @@
 	stroke: #CCC;
 }
 
-.x .tick text {
+/*.x .tick text {
 	display: none;
-}
+}*/
 
 .y .domain {
 	stroke-width: 0;
